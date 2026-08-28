@@ -20,6 +20,7 @@
     "@modelcontextprotocol/client": "^2.0.0"
   },
   "devDependencies": {
+    "@tony.ganchev/eslint-plugin-header": "^3.4.4",
     "@types/node": "^26.2.0",
     "esbuild": "^0.28.2",
     "glob": "^13.0.6",

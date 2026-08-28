@@ -1,15 +1,28 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc"],
+  "jsPlugins": ["@tony.ganchev/eslint-plugin-header"],
   "categories": {
     "correctness": "error"
   },
-  "rules": {},
+  "rules": {
+    "@tony.ganchev/header/header": [
+      "error",
+      {
+        "header": {
+          "file": "scripts/license-header.ts"
+        }
+      }
+    ]
+  },
   "options": {
     "typeAware": true,
     "typeCheck": true
   },
   "env": {
     "builtin": true
-  }
+  },
+  "ignorePatterns": [
+    "scripts/license-header.ts"
+  ]
 }
