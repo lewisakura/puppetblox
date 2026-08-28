@@ -43,10 +43,10 @@ gui.Parent = game.Players.LocalPlayer.PlayerGui
 
 // Click and type into the textbox, and admire your hard work
 await studio.input(
-	mouse.click("left", { x: 200, y: 200 }),
-	mouse.moveTo({ x: 300, y: 300 }),
-	keyboard.text("Hello, Puppetblox!"),
-	keyboard.wait(3000)
+  mouse.click("left", { x: 200, y: 200 }),
+  mouse.moveTo({ x: 300, y: 300 }),
+  keyboard.text("Hello, Puppetblox!"),
+  keyboard.wait(3000),
 );
 
 // Stop the game
@@ -54,5 +54,4 @@ await studio.stopPlaying();
 
 // Cleanup the MCP server
 await studioMcp.close();
-
 ```

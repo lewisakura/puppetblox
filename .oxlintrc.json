@@ -22,7 +22,5 @@
   "env": {
     "builtin": true
   },
-  "ignorePatterns": [
-    "scripts/license-header.ts"
-  ]
+  "ignorePatterns": ["scripts/license-header.ts"]
 }
