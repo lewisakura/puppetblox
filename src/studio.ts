@@ -134,13 +134,22 @@ export class Studio {
 	 * @returns The result of the script, or an error.
 	 */
 	async executeLuau<T>(code: string, context: DatamodelContext = this.#state.focusedDatamodel): Promise<T> {
-		const wrappedCode = `return game:GetService("HttpService"):JSONEncode((function() ${code} end)())`;
+		// TODO: handle instance return values when MCP is updated
+		const wrappedCode = `
+			local result = (function() ${code} end)()
+
+			if result ~= nil then
+				return game:GetService("HttpService"):JSONEncode(result)
+			end
+		`;
 
 		try {
 			const result = await this.#callText("execute_luau", {
-				wrappedCode,
+				code: wrappedCode,
 				datamodel_type: context,
 			});
+
+			if (result === "nil") return null as T;
 
 			return JSON.parse(result);
 		} catch (error) {
