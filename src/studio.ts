@@ -8,7 +8,7 @@ import { MouseInputStep } from "./mouse.js";
 import { KeyboardInputStep } from "./keyboard.js";
 
 import { type StudioMCP } from "./mcp.js";
-import { StudioMCPError } from "./util.js";
+import { StudioMCPError, luau } from "./util.js";
 import { InstanceHandle } from "./instance.js";
 import { PROMISES_LIB } from "./std/index.js";
 
@@ -141,6 +141,7 @@ export class Studio {
 	 */
 	async executeLuau<T>(code: string, context: DatamodelContext = this.#state.focusedDatamodel): Promise<T> {
 		// TODO: handle instance return values when MCP is updated
+		// not using the luau template here because we want to inject the code without modification
 		const wrappedCode = `
 			local result = (function() ${code} end)()
 
@@ -173,6 +174,17 @@ export class Studio {
 
 			throw error;
 		}
+	}
+
+	/**
+	 * Executes Luau in Studio in the current {@link DatamodelContext}. Use as a tagged template.
+	 *
+	 * @param strings The code strings.
+	 * @param exps The expressions.
+	 * @returns The result of the script, or an error.
+	 */
+	async luau<T>(code: TemplateStringsArray, ...exps: any[]): Promise<T> {
+		return await this.executeLuau(luau(code, ...exps));
 	}
 
 	async input(...steps: InputStep[]) {
@@ -237,8 +249,8 @@ export class Studio {
 	async $(query: string, context: DatamodelContext = this.#state.focusedDatamodel): Promise<InstanceHandle | null> {
 		try {
 			const instanceReturnData = await this.executeLuau<{ name: string; type: string }>(
-				`
-				local descendants = game:QueryDescendants([=====[${query}]=====])
+				luau`
+				local descendants = game:QueryDescendants(${query})
 
 				if #descendants == 0 then return nil end
 
@@ -256,8 +268,8 @@ export class Studio {
 	async $$(query: string, context: DatamodelContext = this.#state.focusedDatamodel): Promise<InstanceHandle[]> {
 		try {
 			const instanceReturnData = await this.executeLuau<[{ name: string; type: string }]>(
-				`
-				local descendants = game:QueryDescendants([=====[${query}]=====])
+				luau`
+				local descendants = game:QueryDescendants(${query})
 
 				if #descendants == 0 then return {} end
 
@@ -298,6 +310,7 @@ export class Studio {
 		context: DatamodelContext = this.#state.focusedDatamodel,
 	): Promise<InstanceHandle | null> {
 		try {
+			// not using the luau template here because of the library injection
 			const instanceReturnData = await this.executeLuau<{ name: string; type: string }>(
 				`
 				${PROMISES_LIB}
